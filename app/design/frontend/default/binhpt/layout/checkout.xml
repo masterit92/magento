@@ -18,6 +18,12 @@
             <action method="addJs">
                 <script>binhpt/jquery-1.10.2.min.js</script>
             </action>
+            <action method="addJs">
+                <script>binhpt/jquery.bxslider.min.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>binhpt/css/jquery.bxslider.css</stylesheet>
+            </action>
         </reference>
         <reference name="right">
             <block type="checkout/cart_sidebar" name="cart_sidebar" template="checkout/cart/sidebar.phtml" before="-">
