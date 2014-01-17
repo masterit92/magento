@@ -43,40 +43,40 @@
             new RegionUpdater('country', 'region', 'region_id', <?php echo $this->helper('directory')->getRegionJson() ?>);
         //]]>
         </script>
-
-        <?php if (($_shippingRateGroups = $this->getEstimateRates())): ?>
-        <form id="co-shipping-method-form" action="<?php echo $this->getUrl('checkout/cart/estimateUpdatePost') ?>">
-            <dl class="sp-methods">
-                <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
-                    <dt><?php echo $this->escapeHtml($this->getCarrierName($code)) ?></dt>
-                    <dd>
-                        <ul>
-                        <?php foreach ($_rates as $_rate): ?>
-                            <li<?php if ($_rate->getErrorMessage()) echo ' class="error-msg"';?>>
-                               <?php if ($_rate->getErrorMessage()): ?>
-                                    <?php echo $this->escapeHtml($_rate->getErrorMessage()) ?>
-                               <?php else: ?>
-                                    <input name="estimate_method" type="radio" value="<?php echo $this->escapeHtml($_rate->getCode()) ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="radio" />
-                                    <label for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
-                                    <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
-                                    <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
-                                    <?php echo $_excl; ?>
-                                    <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
-                                        (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
-                                    <?php endif; ?>
-                                    </label>
-                               <?php endif ?>
-                            </li>
-                        <?php endforeach; ?>
-                        </ul>
-                    </dd>
-                <?php endforeach; ?>
-            </dl>
-            <div class="buttons-set">
-                <button type="submit" title="<?php echo $this->__('Update Total') ?>" class="button" name="do" value="<?php echo $this->__('Update Total') ?>"><span><span><?php echo $this->__('Update Total') ?></span></span></button>
-            </div>
-        </form>
-        <?php endif; ?>
+		<?php if (($_shippingRateGroups = $this->getEstimateRates())): ?>
+			<form id="co-shipping-method-form" action="<?php echo $this->getUrl('checkout/cart/estimateUpdatePost') ?>">
+				<dl class="sp-methods">
+					<?php foreach ($_shippingRateGroups as $code => $_rates): ?>
+						<dt><?php echo $this->escapeHtml($this->getCarrierName($code)) ?></dt>
+						<dd>
+							<ul>
+								<?php foreach ($_rates as $_rate): ?>
+									<li<?php if ($_rate->getErrorMessage()) echo ' class="error-msg"';?>>
+										<?php if ($_rate->getErrorMessage()): ?>
+											<?php echo $this->escapeHtml($_rate->getErrorMessage()) ?>
+										<?php else: ?>
+											<input name="estimate_method" type="radio" value="<?php echo $this->escapeHtml($_rate->getCode()) ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="radio" />
+											<label for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
+												<?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+												<?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+												<?php echo $_excl; ?>
+												<?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+													(<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+												<?php endif; ?>
+											</label>
+										<?php endif ?>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						</dd>
+					<?php endforeach; ?>
+				</dl>
+				<div class="buttons-set">
+					<button type="submit" title="<?php echo $this->__('Update Total') ?>" class="button" name="do" value="<?php echo $this->__('Update Total') ?>"><span><span><?php echo $this->__('Update Total') ?></span></span></button>
+				</div>
+			</form>
+		<?php endif; ?>
+<!--		hide shipping update-->
         <script type="text/javascript">
         //<![CDATA[
             var coShippingMethodForm = new VarienForm('shipping-zip-form');

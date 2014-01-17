@@ -32,61 +32,51 @@
  */
 ?>
 <?php if ($this->getItemCount()): ?>
-	<div class="crosssell">
-		<h3><?php echo $this->__('ADD ANY OF THESE FOR FREE SHIPPING') ?></h3>
-		<ul id="crosssell-products-list" class="bxslider">
-			<?php foreach ($this->getItems() as $_item): ?>
-				<li class="item">
-					<a class="product-image" href="<?php echo $_item->getProductUrl() ?>"
-					   title="<?php echo $this->escapeHtml($_item->getName()) ?>">
-						<img src="<?php echo $this->helper('catalog/image')->init($_item, 'thumbnail')->resize(100); ?>"
-							 width="75" height="75" alt="<?php echo $this->escapeHtml($_item->getName()) ?>"/>
-					</a>
-
-					<div class="product-details">
-						<h3 class="product-name"><a
-								href="<?php echo $_item->getProductUrl() ?>"><?php echo $this->escapeHtml($_item->getName()) ?></a>
-						</h3>
-						<?php echo $this->getPriceHtml($_item, true) ?>
-						<input type="checkbox" name="item" class="cb_item" id="proID_<?php echo $_item->getID(); ?>"/>
-					</div>
-				</li>
-				<div id="attr_item_<?php echo $_item->getID(); ?>" class="attr_item" style="position: absolute">
-					OKOK
-				</div>
-			<?php endforeach; ?>
-		</ul>
-		<script type="text/javascript">
-			$(document).ready(function () {
-				$(".attr_item").hide();
-
-				$('.cb_item').change(function () {
-					var item = $(this).attr('id').replace('proID_', '');
-					var attr_item = '#attr_item_' + item;
-//					$('.cb_item').each(function(){
-//						if($(this).attr('id').val() == attr_item){
-//							alert(attr_item);
-//						}else{
-//							//$(this).prop('checked', false);
-//						}
-//					});
-					$(".attr_item").hide();
-					if (this.checked) {
-						$(attr_item).show();
-					} else {
-						$(attr_item).hide();
-					}
-				});
-				$('.bxslider').bxSlider({
-					mode: 'vertical',
-					slideMargin: 1,
-					minSlides: 3,
-					maxSlides: 3,
-					pager: false
-				});
-			});
-
-		</script>
-		<script type="text/javascript">decorateList('crosssell-products-list', 'none-recursive')</script>
+	<div id="slider5">
+		<a class="buttons prev" href="#">left</a>
+		<div class="viewport">
+			<ul class="overview">
+				<?php foreach ($this->getItems() as $_item): ?>
+					<li class="item">
+						<a class="product-image" href="<?php echo $_item->getProductUrl() ?>"
+						   title="<?php echo $this->escapeHtml($_item->getName()) ?>">
+							<img src="<?php echo $this->helper('catalog/image')->init($_item, 'thumbnail')->resize(100); ?>"
+								 width="75" height="75" alt="<?php echo $this->escapeHtml($_item->getName()) ?>"/>
+						</a>
+						<div class="product-details">
+							<h3 class="product-name"><a
+									href="<?php echo $_item->getProductUrl() ?>"><?php echo $this->escapeHtml($_item->getName()) ?></a>
+							</h3>
+							<?php echo $this->getPriceHtml($_item, true) ?>
+							<input type="checkbox" name="item" class="cb_item" id="proID_<?php echo $_item->getID(); ?>"/>
+						</div>
+						<div id="attr_item_<?php echo $_item->getID(); ?>" class="attr_item" style=" position: absolute; background: red;">
+							OKOKOKOKOKOKOKOK
+							OKOKOKOKOKOK
+						</div>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+		<a class="buttons next" href="#">right</a>
 	</div>
 <?php endif; ?>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#slider5').tinycarousel({ axis: 'y'});
+
+		$(".attr_item").hide();
+
+		$('.cb_item').change(function () {
+			$('.cb_item').filter(':checked').not(this).removeAttr('checked');
+			var item = $(this).attr('id').replace('proID_', '');
+			var attr_item = '#attr_item_' + item;
+			$(".attr_item").hide();
+			if (this.checked) {
+				$(attr_item).show();
+			} else {
+				$(attr_item).hide();
+			}
+		});
+	});
+</script>

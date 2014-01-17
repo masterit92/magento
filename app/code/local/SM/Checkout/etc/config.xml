@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <SM_Checkout>
+            <version>0.0.1</version>
+        </SM_Checkout>
+    </modules>
+    <global>
+        <models>
+            <sm_checkout>
+                <class>SM_Checkout_Model</class>
+            </sm_checkout>
+        </models>
+    </global>
+    <frontend>
+        <events>
+            <checkout_cart_save_before>
+                <observers>
+                    <sm_checkout_observer>
+                        <type>singleton</type>
+                        <class>sm_checkout/observer</class>
+                        <method>addShipping</method>
+                    </sm_checkout_observer>
+                </observers>
+            </checkout_cart_save_before>
+        </events>
+    </frontend>
+</config>

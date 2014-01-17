@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <SM_Wishlist>
+            <version>0.1.0</version>
+        </SM_Wishlist>
+    </modules>
+    <global>
+        <rewrite>
+            <sm_wishlist_wishlist_index>
+                <from><![CDATA[#^/wishlist/$#]]></from>
+                <to>/wishlist/</to>
+            </sm_wishlist_wishlist_index>
+        </rewrite>
+    </global>
+    <frontend>
+        <routers>
+            <sm_wishlist>
+                <use>standard</use>
+                <args>
+                    <module>SM_Wishlist</module>
+                    <frontName>wishlist</frontName>
+                </args>
+            </sm_wishlist>
+        </routers>
+    </frontend>
+</config> 

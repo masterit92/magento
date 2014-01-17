@@ -36,6 +36,7 @@
         <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
 
         <form id="wishlist-view-form" action="<?php echo $this->getUrl('wishlist/index/update/', array('wishlist_id' => $this->getWishlistInstance()->getId())) ?>" method="post">
+			<input type="hidden" value="1" name="checkout"/>
             <?php echo $this->getChildHtml('top'); ?>
             <fieldset>
                 <?php if ($this->hasWishlistItems()): ?>
