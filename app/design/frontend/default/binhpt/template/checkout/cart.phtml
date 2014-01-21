@@ -1,24 +1,4 @@
-<script>
-	$(document).ready(function () {
-		$('.buttonUp_qty').click(function () {
-			var cart_id = '#' + $(this).attr('id').replace('btn_', '');
-			var qty = $(cart_id).val();
-			qty = parseInt(qty) + 1;
-			$(cart_id).val(qty);
-			$(cart_id).attr('value', qty);
-		});
-		$('.buttonDown_qty').click(function () {
-			var cart_id = '#' + $(this).attr('id').replace('btn_', '');
-			var qty = $(cart_id).val();
-			qty = parseInt(qty) - 1;
-			if (qty < 0) {
-				return false;
-			}
-			$(cart_id).val(qty);
-			$(cart_id).attr('value', qty);
-		});
-	});
-</script>
+
 <div class="cart">
 	<div class="page-title title-buttons">
 		<h1><?php echo $this->__('Shopping Cart') ?></h1>

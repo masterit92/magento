@@ -6,12 +6,6 @@
         </SM_Wishlist>
     </modules>
     <global>
-        <rewrite>
-            <sm_wishlist_wishlist_index>
-                <from><![CDATA[#^/wishlist/$#]]></from>
-                <to>/wishlist/</to>
-            </sm_wishlist_wishlist_index>
-        </rewrite>
     </global>
     <frontend>
         <routers>

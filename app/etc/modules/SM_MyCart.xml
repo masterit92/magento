@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<config>
-    <modules>
-        <SM_MyCart>
-            <active>true</active>
-            <codePool>local</codePool>
-        </SM_MyCart>
-    </modules>
-</config>

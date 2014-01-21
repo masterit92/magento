@@ -10,7 +10,7 @@ class SM_Wishlist_IndexController extends Mage_Wishlist_IndexController {
 	{
 		if (!$this->_validateFormKey())
 		{
-			return $this->_redirect('*/*/');
+			$this->_redirectreferer('*/*/');
 		}
 		$wishlist = $this->_getWishlist();
 		if (!$wishlist)
@@ -105,15 +105,6 @@ class SM_Wishlist_IndexController extends Mage_Wishlist_IndexController {
 				return;
 			}
 		}
-		if (isset($post['checkout']))
-		{
-			$this->_redirect('checkout/cart/');
-		}
-		else
-		{
-			$this->_redirect('*', array('wishlist_id' => $wishlist->getId()));
-		}
+		$this->_redirectreferer('*/*/');
 	}
 }
-
-?>

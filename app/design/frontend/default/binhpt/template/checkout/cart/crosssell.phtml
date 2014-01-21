@@ -32,51 +32,106 @@
  */
 ?>
 <?php if ($this->getItemCount()): ?>
-	<div id="slider5">
-		<a class="buttons prev" href="#">left</a>
-		<div class="viewport">
-			<ul class="overview">
-				<?php foreach ($this->getItems() as $_item): ?>
-					<li class="item">
+	<form id="srosssell-view-form" action="" method="post">
+		<div class="crosssell">
+			<ul class="bxslider">
+				<?php $i = 0;
+				foreach ($this->getItems() as $_item): ?>
+					<li class="item" id="slider_li_<?php echo $_item->getID(); ?>">
 						<a class="product-image" href="<?php echo $_item->getProductUrl() ?>"
 						   title="<?php echo $this->escapeHtml($_item->getName()) ?>">
-							<img src="<?php echo $this->helper('catalog/image')->init($_item, 'thumbnail')->resize(100); ?>"
-								 width="75" height="75" alt="<?php echo $this->escapeHtml($_item->getName()) ?>"/>
+							<img
+								src="<?php echo $this->helper('catalog/image')->init($_item, 'thumbnail')->resize(100); ?>"
+								width="75" height="75" alt="<?php echo $this->escapeHtml($_item->getName()) ?>"/>
 						</a>
+
 						<div class="product-details">
 							<h3 class="product-name"><a
 									href="<?php echo $_item->getProductUrl() ?>"><?php echo $this->escapeHtml($_item->getName()) ?></a>
 							</h3>
 							<?php echo $this->getPriceHtml($_item, true) ?>
-							<input type="checkbox" name="item" class="cb_item" id="proID_<?php echo $_item->getID(); ?>"/>
-						</div>
-						<div id="attr_item_<?php echo $_item->getID(); ?>" class="attr_item" style=" position: absolute; background: red;">
-							OKOKOKOKOKOKOKOK
-							OKOKOKOKOKOK
+							<input type="checkbox" name="item" class="cb_item"
+								   id="proID_<?php echo $_item->getID(); ?>" num="<?php echo $i;
+							$i++; ?>"/>
 						</div>
 					</li>
 				<?php endforeach; ?>
 			</ul>
+
+			<?php $i = count($this->getItems());
+			foreach ($this->getItems() as $_item): ?>
+				<?php $_product = Mage::getSingleton('catalog/product')->load($_item->getID()) ?>
+				<?php
+				$color = $_product->getResource()->getAttribute('color')->getFrontend()->getValue($_product);
+				if ($color != 'No'):
+					?>
+					<div id="attr_item_<?php echo $_item->getID(); ?>" class="attr_item">
+
+						<div>
+							Colour:
+							<?php
+
+							if ($color == 'No'):
+								echo $color;
+							else:
+								?>
+								<select>
+									<option>
+										KAKA
+									</option>
+								</select>
+							<?php
+							endif;
+							//echo $_product->getResource()->getAttribute('color')->getFrontend()->getValue($_product);
+							?>
+						</div>
+						<div>
+							Size: <?php echo $_product->getResource()->getAttribute('size')->getFrontend()->getValue($_product); ?>
+						</div>
+						<button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart"
+								onclick="setLocation('<?php echo $this->getAddToCartUrl($_item) ?>')">
+							<span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
+					</div>
+				<?php endif; ?>
+			<?php endforeach; ?>
 		</div>
-		<a class="buttons next" href="#">right</a>
-	</div>
+	</form>
 <?php endif; ?>
 <script type="text/javascript">
-	$(document).ready(function(){
-		$('#slider5').tinycarousel({ axis: 'y'});
-
+	jQuery(document).ready(function ($) {
+		$('.bxslider').bxSlider({
+			mode: 'vertical',
+			pager: false,
+			minSlides: 2,
+			maxSlides: 2
+		});
 		$(".attr_item").hide();
-
 		$('.cb_item').change(function () {
-			$('.cb_item').filter(':checked').not(this).removeAttr('checked');
+			//$('.cb_item').filter(':checked').not(this).removeAttr('checked');
 			var item = $(this).attr('id').replace('proID_', '');
+			var id_li = '#slider_li_' + item;
+			var position = $(id_li).position();
+			var num = $(this).attr('num');
+			var top = 135;//position.top;
+			if (num % 2 == 0) {
+				top = 5;
+			}
+			var width_div = $('.attr_item').width();
+			var left = position.left - width_div;
 			var attr_item = '#attr_item_' + item;
 			$(".attr_item").hide();
 			if (this.checked) {
 				$(attr_item).show();
+				$(attr_item).css({'top': top, 'left': left});
 			} else {
 				$(attr_item).hide();
 			}
 		});
-	});
+		$('.bx-next').click(function () {
+			$(".attr_item").hide();
+		});
+		$('.bx-prev').click(function () {
+			$(".attr_item").hide();
+		});
+	})(jQuery);
 </script>
