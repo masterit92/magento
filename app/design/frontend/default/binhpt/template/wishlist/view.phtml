@@ -52,7 +52,7 @@
             </fieldset>
         </form>
 
-        <form id="wishlist-allcart-form" action="<?php echo $this->getUrl('*/*/allcart') ?>" method="post">
+        <form id="wishlist-allcart-form" action="<?php echo $this->getUrl('wishlist/index/allcart') ?>" method="post">
             <?php echo $this->getBlockHtml('formkey') ?>
             <div class="no-display">
                 <input type="hidden" name="wishlist_id" id="wishlist_id" value="<?php echo $this->getWishlistInstance()->getId() ?>" />

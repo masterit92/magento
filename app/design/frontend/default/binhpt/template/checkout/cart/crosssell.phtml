@@ -36,7 +36,9 @@
 		<div class="crosssell">
 			<ul class="bxslider">
 				<?php $i = 0;
-				foreach ($this->getItems() as $_item): ?>
+				foreach ($this->getItems() as $_item):
+					$configurable = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($_item->getId());
+					?>
 					<li class="item" id="slider_li_<?php echo $_item->getID(); ?>">
 						<a class="product-image" href="<?php echo $_item->getProductUrl() ?>"
 						   title="<?php echo $this->escapeHtml($_item->getName()) ?>">
@@ -50,52 +52,61 @@
 									href="<?php echo $_item->getProductUrl() ?>"><?php echo $this->escapeHtml($_item->getName()) ?></a>
 							</h3>
 							<?php echo $this->getPriceHtml($_item, true) ?>
-							<input type="checkbox" name="item" class="cb_item"
+							<input type="checkbox" name="related_products[]" class="cb_item"
 								   id="proID_<?php echo $_item->getID(); ?>" num="<?php echo $i;
-							$i++; ?>"/>
+							$i++; ?>"
+								   value="<?php echo !empty($configurable) ? $_item->getID() : '-1'; ?>"
+								/>
 						</div>
 					</li>
 				<?php endforeach; ?>
 			</ul>
 
 			<?php $i = count($this->getItems());
-			foreach ($this->getItems() as $_item): ?>
-				<?php $_product = Mage::getSingleton('catalog/product')->load($_item->getID()) ?>
-				<?php
-				$color = $_product->getResource()->getAttribute('color')->getFrontend()->getValue($_product);
-				if ($color != 'No'):
+			foreach ($this->getItems() as $_item):
+				$configurable = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($_item->getId());
+				$_product = Mage::getSingleton('catalog/product')->load($_item->getID());
+				if (empty($configurable)):
+					$productAttributeOptions = $_product->getTypeInstance(true)->getConfigurableAttributesAsArray($_product);
+					$attributeOptions = array();
+					foreach ($productAttributeOptions as $productAttribute)
+					{
+						foreach ($productAttribute['values'] as $attribute)
+						{
+							$attributeOptions[$productAttribute['label']][$attribute['value_index']] = $attribute['store_label'];
+						}
+					}
 					?>
 					<div id="attr_item_<?php echo $_item->getID(); ?>" class="attr_item">
 
 						<div>
-							Colour:
 							<?php
-
-							if ($color == 'No'):
-								echo $color;
-							else:
-								?>
-								<select>
-									<option>
-										KAKA
-									</option>
-								</select>
-							<?php
-							endif;
-							//echo $_product->getResource()->getAttribute('color')->getFrontend()->getValue($_product);
+							foreach ($attributeOptions as $attribute => $arr_attr):
+								echo $attribute;
+								echo '<select>';
+								echo "<option > $attribute </option>";
+								foreach ($arr_attr as $value):
+									?>
+									<option><?php echo $value; ?></option>
+								<?php
+								endforeach;
+								echo '</select><br/>';
+							endforeach;
 							?>
-						</div>
-						<div>
-							Size: <?php echo $_product->getResource()->getAttribute('size')->getFrontend()->getValue($_product); ?>
 						</div>
 						<button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart"
 								onclick="setLocation('<?php echo $this->getAddToCartUrl($_item) ?>')">
 							<span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
 					</div>
-				<?php endif; ?>
-			<?php endforeach; ?>
+				<?php
+				endif;
+			endforeach;
+			?>
 		</div>
 	</form>
+	<button type="button" onclick="addItemsProductToCart()" class="button btn-cart">
+		<span><span>Add Items Selected To Cart</span></span>
+	</button>
 <?php endif; ?>
 <script type="text/javascript">
 	jQuery(document).ready(function ($) {
@@ -107,7 +118,7 @@
 		});
 		$(".attr_item").hide();
 		$('.cb_item').change(function () {
-			//$('.cb_item').filter(':checked').not(this).removeAttr('checked');
+//			$('.cb_item').filter(':checked').not(this).removeAttr('checked');
 			var item = $(this).attr('id').replace('proID_', '');
 			var id_li = '#slider_li_' + item;
 			var position = $(id_li).position();
@@ -134,4 +145,22 @@
 			$(".attr_item").hide();
 		});
 	})(jQuery);
+	function addItemsProductToCart() {
+		var checkboxes = jQuery('.cb_item');
+		var checkbox_id = new Array();
+		for (var i = 0; i < checkboxes.length; i++) {
+			if (checkboxes[i].checked && checkboxes[i].value != -1)
+				checkbox_id.push(checkboxes[i].value);
+		}
+		if (checkbox_id.length > 0) {
+			var key = jQuery("input[name='form_key']").val();
+			var url = '<?php echo $this->getUrl('checkout/cart/add');?>';
+			url += '?form_key=' + key;
+			url += '&product=' + checkbox_id[0];
+			checkbox_id.splice(0,1);
+			var str_id = checkbox_id.join(',');
+			url += '&related_product=' + str_id;
+			setLocation(url);
+		}
+	}
 </script>
