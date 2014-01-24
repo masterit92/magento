@@ -1,0 +1,120 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+$columns = $this->getColumns();
+?>
+<table class="data-table" id="wishlist-table">
+	<thead>
+	<tr>
+		<th>
+			<input type="checkbox" id="cb_all_wishlist" />
+		</th>
+		<?php foreach ($columns as $column): ?>
+			<th><?php echo $column->getTitle(); ?></th>
+		<?php endforeach; ?>
+	</tr>
+	</thead>
+	<tbody>
+	<?php if (count($this->getItems())): ?>
+		<div>
+			WISHLIST(<?php echo count($this->getItems());?> ITEM).
+		</div>
+		<?php
+		foreach ($this->getItems() as $item):
+			$configurable = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($item->getProductID());
+			?>
+			<tr id="item_<?php echo $item->getId(); ?>">
+				<td>
+					<input type="checkbox" name="related_products[]" class="cb_item_wishlist"
+						   id="proID_<?php echo $item->getProductID(); ?>"
+						   value="<?php echo !empty($configurable) ? $item->getProductID() : '-1'; ?>"
+						   item_wishlist= "<?php echo $item->getID();?>"
+						/>
+				</td>
+				<?php foreach ($columns as $column): ?>
+					<td><?php $column->setItem($item);
+						echo $column->toHtml($item); ?></td>
+				<?php endforeach; ?>
+			</tr>
+		<?php endforeach ?>
+	<?php else: ?>
+		<td colspan="<?php echo count($columns); ?>"
+			class="wishlist-empty"><?php echo $this->__('This Wishlist has no Items'); ?></td>
+	<?php endif; ?>
+	</tbody>
+</table>
+<?php foreach ($columns as $column): ?>
+	<?php echo $column->getAdditionalHtml(); ?>
+<?php endforeach; ?>
+<script type="text/javascript">
+	//<![CDATA[
+	decorateTable('wishlist-table');
+
+	<?php foreach ($columns as $column): ?>
+	<?php echo $column->getJs();?>
+	<?php endforeach; ?>
+	//]]>
+	jQuery(document).ready(function ($) {
+		$('#cb_all_wishlist').change(function(){
+			if(this.checked){
+				$('.cb_item_wishlist').prop('checked', true);
+			}else{
+				$('.cb_item_wishlist').prop('checked', false);
+			}
+		});
+
+	})(jQuery);
+	function addItemsWishlistToCart() {
+		var checkboxes = jQuery('.cb_item_wishlist');
+		var checkbox_id = new Array();
+		var item_wishlist= new Array();
+		var arr_qty= new Array();
+		for (var i = 0; i < checkboxes.length; i++) {
+			if (checkboxes[i].checked && checkboxes[i].value != -1)
+			{
+				checkbox_id.push(checkboxes[i].value);
+				var checkbox= checkboxes[i];
+				var item_value = jQuery(checkbox).attr('item_wishlist');
+				var id_txt = '#cart'+item_value;
+				var qty = parseInt(jQuery(id_txt).val());
+				arr_qty.push(qty);
+				item_wishlist.push(item_value);
+			}
+		}
+		if (checkbox_id.length > 0) {
+			var key = jQuery("input[name='form_key']").val();
+			var url= '<?php echo $this->getUrl('wishlist/index/addWishlistToCart/');?>' +'item/'+ item_wishlist.join(',');
+			//url += '?form_key=' + key;
+			//url += '&product=' + checkbox_id[0];
+			//checkbox_id.splice(0,1);
+			//var str_id = checkbox_id.join(',');
+			//url += '&related_product=' + str_id;
+			url += '?qty=' +arr_qty.join(',') ;
+			setLocation(url);
+		}
+	}
+</script>
