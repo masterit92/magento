@@ -162,61 +162,67 @@ class SM_Wishlist_IndexController extends Mage_Wishlist_IndexController {
 	/**
 	 * Remove item
 	 */
-	public function multipleRemoveAction()
-	{
-		$arr_itemId = explode(',', (int)$this->getRequest()->getParam('item'));
-		//		$form_key = $this->getRequest()->getParam('form_key');
-		//		$product = $this->getRequest()->getParam('product');
-		//		$related_product = $this->getRequest()->getParam('related_product');
-		//		$url_add_to_cart = "checkout/cart/add?form_key=$form_key&product=$product&related_product=$related_product";
-		foreach ($arr_itemId as $item_id)
-		{
-			$this->addWishlistToCart($item_id);
-			$item = Mage::getModel('wishlist/item')->load($item_id);
-			if (!$item->getId())
-			{
-				return $this->norouteAction();
-			}
-			$wishlist = $this->_getWishlist($item->getWishlistId());
-			if (!$wishlist)
-			{
-				return $this->norouteAction();
-			}
-			try
-			{
-				$item->delete();
-				$wishlist->save();
-			}
-			catch (Mage_Core_Exception $e)
-			{
-				Mage::getSingleton('customer/session')->addError($this->__('An error occurred while deleting the item from wishlist: %s', $e->getMessage()));
-			}
-			catch (Exception $e)
-			{
-				Mage::getSingleton('customer/session')->addError($this->__('An error occurred while deleting the item from wishlist.'));
-			}
-		}
-		Mage::helper('wishlist')->calculate();
+//	public function multipleRemoveAction()
+//	{
+//		$arr_itemId = explode(',', (int)$this->getRequest()->getParam('item'));
+//		//		$form_key = $this->getRequest()->getParam('form_key');
+//		//		$product = $this->getRequest()->getParam('product');
+//		//		$related_product = $this->getRequest()->getParam('related_product');
+//		//		$url_add_to_cart = "checkout/cart/add?form_key=$form_key&product=$product&related_product=$related_product";
+//		foreach ($arr_itemId as $item_id)
+//		{
+//			$this->addWishlistToCart($item_id);
+//			$item = Mage::getModel('wishlist/item')->load($item_id);
+//			if (!$item->getId())
+//			{
+//				return $this->norouteAction();
+//			}
+//			$wishlist = $this->_getWishlist($item->getWishlistId());
+//			if (!$wishlist)
+//			{
+//				return $this->norouteAction();
+//			}
+//			try
+//			{
+//				$item->delete();
+//				$wishlist->save();
+//			}
+//			catch (Mage_Core_Exception $e)
+//			{
+//				Mage::getSingleton('customer/session')->addError($this->__('An error occurred while deleting the item from wishlist: %s', $e->getMessage()));
+//			}
+//			catch (Exception $e)
+//			{
+//				Mage::getSingleton('customer/session')->addError($this->__('An error occurred while deleting the item from wishlist.'));
+//			}
+//		}
+//		Mage::helper('wishlist')->calculate();
+//
+//		$this->_redirectreferer('*/*/');
+//		//		$this->_redirect('checkout/cart/');
+//		//$this->_redirect($url_add_to_cart);
+//	}
 
-		$this->_redirectreferer('*/*/');
-		//		$this->_redirect('checkout/cart/');
-		//$this->_redirect($url_add_to_cart);
-	}
-
-	protected function addWishlistToCartAction()
+	public function addWishlistToCartAction()
 	{
 		$arr_itemId = explode(',', $this->getRequest()->getParam('item'));
 		$arr_qty = explode(',', $this->getRequest()->getParam('qty'));
-		$i=0;
-		foreach ($arr_itemId as $id)
-		{
-			$this->addSelectedWishlist($id,$arr_qty[$i]);
-			$i++;
+
+		$this->addSelectedWishlist($arr_itemId[0], $arr_qty[0]);
+		array_shift($arr_itemId);
+		array_shift($arr_qty);
+		if(count($arr_itemId)>0){
+			$param_id = implode(',',$arr_itemId);
+			$param_qty = implode(',',$arr_qty);
+			$url = 'wishlist/index/addWishlistToCart/item/'.$param_id.'?qty='.$param_qty;
+			$this->_redirect($url);
+		}else{
+			return $this->_redirectReferer('*/*');
 		}
-		return $this->_redirectReferer('*/*');
+
 	}
 
-	protected function addSelectedWishlist($itemId,$qty=NULL)
+	protected function addSelectedWishlist($itemId, $qty = NULL)
 	{
 		/* @var $item Mage_Wishlist_Model_Item */
 		$item = Mage::getModel('wishlist/item')->load($itemId);
@@ -231,7 +237,8 @@ class SM_Wishlist_IndexController extends Mage_Wishlist_IndexController {
 		}
 		//	 Set qty
 		$qty = $this->_processLocalizedQty($qty);
-		if ($qty) {
+		if ($qty)
+		{
 			$item->setQty($qty);
 		}
 		/* @var $session Mage_Wishlist_Model_Session */
